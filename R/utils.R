@@ -21,3 +21,4 @@ convert_character_to_POSIXct = function(c)
 
 rename_csv_to_parquet = function(n)
     paste0(substr(n, 1, nchar(n) - 3), 'parquet')
+

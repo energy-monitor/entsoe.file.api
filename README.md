@@ -26,7 +26,7 @@ devtools::install_github("energy-monitor/entsoe.file.api")
 library(entsoe.file.api)
 
 # Set up caching
-set_cache_folder("cache")
+set_entsoe_cache("cache")
 
 # Set up authentication
 set_entsoe_credentials("username", "password")

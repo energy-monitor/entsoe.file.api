@@ -72,12 +72,14 @@ list_entsoe_files_online = function(
     content = httr::content(response)
     
     d = data.table::rbindlist(lapply(content$itemList, function(e) as.data.frame(t(unlist(e)))))
-
+    if (nrow(d) == 0) {
+        return(NULL)
+    }
     d[, .(
         id = fileId,
         name = content.filename,
-        # size = as.integer(size),
-        # originalSize = as.integer(size),
+        size = as.integer(content.size),
+        # originalSize = as.integer(content.originalSize),
         updated = convert_character_to_POSIXct(lastUpdatedTimestamp),
         from = convert_character_to_POSIXct(periodCovered.from),
         to = convert_character_to_POSIXct(periodCovered.to),

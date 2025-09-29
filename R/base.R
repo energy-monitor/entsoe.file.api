@@ -4,6 +4,10 @@ update_data = function(
 ) {
     logger::log_info(glue::glue("Obtaining metadata for `{folder}`...")) 
     do = list_entsoe_files_online(folder, from, to)
+    if (is.null(do)) {
+        logger::log_error(glue::glue("No entsoe files found for period in folder `{folder}`"))
+        stop(glue::glue("No entsoe files found for period in folder `{folder}`"))
+    }
     logger::log_info(glue::glue("Period data is contained in {nrow(do)} file(s)")) 
 
     dc = NULL
@@ -20,8 +24,8 @@ update_data = function(
         dd = do
     } else { 
         dm = data.table::merge.data.table(
-            do[, list(id, name, updated, from, to, folder)],
-            dc[, list(name, updated.cache = updated)], 
+            do[, .(id, name, updated, from, to, folder, size)],
+            dc[, .(name, updated.cache = updated)], 
             by = "name", all.x = TRUE
         )
         dd = dm[updated > updated.cache | is.na(updated.cache)]
@@ -30,7 +34,8 @@ update_data = function(
         }
     }
     if (nrow(dd) > 0) {
-        logger::log_info(glue::glue("Downloading {nrow(dd)} file(s) ...")) 
+        size = signif(sum(dd$size)/2**20, 2)
+        logger::log_info(glue::glue("Downloading {nrow(dd)} file(s) (~ {size} MB)...")) 
         download_entsoe_files(dd$id, path)
     }
     if (e.pkg$cache$enabled) {
@@ -40,7 +45,7 @@ update_data = function(
         files = dd,
         path = path
     )
-    }
+}
 
 
 #' Load ENTSO-E Data
@@ -89,7 +94,15 @@ load_entsoe_data = function(
     d = data.table::rbindlist(lapply(
         file.path(path, rename_csv_to_parquet(names)), arrow::read_parquet
     ))
-    d[`DateTime(UTC)` >= from & `DateTime(UTC)` <= to]
+
+    time.col = grep("DateTime", colnames(d), value = TRUE)
+
+    if (length(time.col) != 1) {
+        logger::log_warn("Could not identify DateTime column, please filter by DateTime yourself")
+        return(d)
+    }
+
+    d[get(time.col) >= from & get(time.col) <= to]
 }
 
 

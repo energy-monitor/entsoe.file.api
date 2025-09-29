@@ -6,10 +6,10 @@
 #' @return No return value, called for side effects
 #' @examples
 #' \dontrun{
-#' set_cache_folder("your_folder")
+#' set_entsoe_cache("your_folder")
 #' }
 #' @export
-set_cache_folder = function(folder) {
+set_entsoe_cache = function(folder) {
     e.pkg$cache = list(
         folder = folder,
         enabled = TRUE

@@ -17,6 +17,7 @@ set_entsoe_credentials = function(username, password)
 
 get_token = function() {
     if (is.null(e.pkg$credentials)) {
+        logger::log_error("No credentials set")
         stop("No credentials set")
     } 
 
