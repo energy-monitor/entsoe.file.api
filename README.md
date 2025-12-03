@@ -5,7 +5,7 @@
 
 The [ENTSO-E File Library API](https://transparencyplatform.zendesk.com/hc/en-us/articles/35960137882129-File-Library-Guide) is the replacement for the discontinued SFTP access.
 
-This R package is a wraper around this [API](https://documenter.getpostman.com/view/28274243/2sB2qgfz3W#b7c7695c-ab81-4100-9c3a-cde1a4cf46ac) and provides:
+This R package is a wrapper around this [API](https://documenter.getpostman.com/view/28274243/2sB2qgfz3W#b7c7695c-ab81-4100-9c3a-cde1a4cf46ac) and provides:
   - Transparent authentication
   - Simple retrieval by ENTSO‑E folder names
   - ZIP-compressed downloads
