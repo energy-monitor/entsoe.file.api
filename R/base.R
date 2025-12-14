@@ -1,14 +1,14 @@
 update_data = function(
-    folder, 
+    folder,
     from, to
 ) {
-    logger::log_info(glue::glue("Obtaining metadata for `{folder}`...")) 
+    logger::log_info(glue::glue("Obtaining metadata for `{folder}`..."))
     do = list_entsoe_files_online(folder, from, to)
     if (is.null(do)) {
         logger::log_error(glue::glue("No entsoe files found for period in folder `{folder}`"))
         stop(glue::glue("No entsoe files found for period in folder `{folder}`"))
     }
-    logger::log_info(glue::glue("Period data is contained in {nrow(do)} file(s)")) 
+    logger::log_info(glue::glue("Period data is contained in {nrow(do)} file(s)"))
 
     dc = NULL
 
@@ -18,29 +18,28 @@ update_data = function(
     } else {
         path = tempdir()
     }
-    
 
     if (is.null(dc)) {
         dd = do
-    } else { 
+    } else {
         dm = data.table::merge.data.table(
             do[, .(id, name, updated, from, to, folder, size)],
-            dc[, .(name, updated.cache = updated)], 
+            dc[, .(name, updated.cache = updated)],
             by = "name", all.x = TRUE
         )
         dd = dm[updated > updated.cache | is.na(updated.cache)]
         if (nrow(dd) < nrow(dm)) {
-            logger::log_info(glue::glue("Using cache for {nrow(dm) - nrow(dd)} file(s)")) 
+            logger::log_info(glue::glue("Using cache for {nrow(dm) - nrow(dd)} file(s)"))
         }
     }
     if (nrow(dd) > 0) {
         size = signif(sum(dd$size)/2**20, 2)
-        logger::log_info(glue::glue("Downloading {nrow(dd)} file(s) (~ {size} MB)...")) 
+        logger::log_info(glue::glue("Downloading {nrow(dd)} file(s) (~ {size} MB)..."))
         download_entsoe_files(dd$id, path)
     }
     if (e.pkg$cache$enabled) {
         dd = update_cache_toc(dd)
-    } 
+    }
     list(
         files = dd,
         path = path
@@ -63,19 +62,19 @@ update_data = function(
 #' }
 #' @export
 load_entsoe_data = function(
-    folder, 
+    folder,
     from, to = Sys.time(),
     checkUpdates = TRUE
 ) {
     if (checkUpdates) {
-        t = update_data(folder, from, to) 
+        t = update_data(folder, from, to)
         dc = t$files
         path = t$path
     } else {
         dc = get_cache_toc()
         path = e.pkg$cache$folder
     }
-  
+
     dc = dc[folder == get("folder", envir = parent.env(environment()))][order(from)]
 
     intervals = lubridate::interval(dc$from, dc$to)
@@ -90,7 +89,7 @@ load_entsoe_data = function(
     if (sum(w.to) > 0) i.to = min(which(w.to))
 
     names = dc[i.from:i.to]$name
-  
+
     d = data.table::rbindlist(lapply(
         file.path(path, rename_csv_to_parquet(names)), arrow::read_parquet
     ))
@@ -104,6 +103,3 @@ load_entsoe_data = function(
 
     d[get(time.col) >= from & get(time.col) <= to]
 }
-
-
-  

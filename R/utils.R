@@ -13,12 +13,18 @@ get_entsoe_folders = function() {
     data.table::fread(csv_path)
 }
 
-convert_POSIXct_to_character = function(p)
+convert_POSIXct_to_character = function(p) {
     format(lubridate::with_tz(p, "UTC"), "%Y-%m-%dT%H:%M:%OSZ")
+}
 
-convert_character_to_POSIXct = function(c)
-    as.POSIXct(c, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
+convert_POSIXct_to_characterYM = function(p) {
+    format(lubridate::with_tz(p, "UTC"), "%Y-%m")
+}
 
-rename_csv_to_parquet = function(n)
-    paste0(substr(n, 1, nchar(n) - 3), 'parquet')
+convert_character_to_POSIXct = function(c) {
+    as.POSIXct(c, format="%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
+}
 
+rename_csv_to_parquet = function(n) {
+    paste0(substr(n, 1, nchar(n) - 3), "parquet")
+}

@@ -2,6 +2,7 @@
 
 export(get_entsoe_folders)
 export(load_entsoe_data)
+export(load_entsoe_data_wa)
 export(set_entsoe_cache)
 export(set_entsoe_credentials)
 import(data.table)

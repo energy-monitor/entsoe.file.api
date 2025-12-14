@@ -10,16 +10,17 @@
 #' set_entsoe_credentials("your_username", "your_password")
 #' }
 #' @export
-set_entsoe_credentials = function(username, password)
+set_entsoe_credentials = function(username, password) {
     e.pkg$credentials = list(
         username = username, password = password
     )
+}
 
 get_token = function() {
     if (is.null(e.pkg$credentials)) {
         logger::log_error("No credentials set")
         stop("No credentials set")
-    } 
+    }
 
     tryCatch({
         time = Sys.time()
