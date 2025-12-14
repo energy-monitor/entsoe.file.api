@@ -31,8 +31,8 @@ list_entsoe_folder_online = function(
         name = name,
         size = as.integer(size),
         # originalSize = as.integer(size),
-        updated = convert_character_to_POSIXct(lastUpdatedTimestamp)
-        # folder
+        updated = convert_character_to_POSIXct(lastUpdatedTimestamp),
+        folder = folder
     )]
 }
 
